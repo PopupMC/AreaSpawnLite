@@ -1,0 +1,52 @@
+#############################
+#        AreaSpawnerLite    #
+#        by DarkPrincess    #
+#############################
+
+# A much more stripped down version of the AreaSpawner plugin I sponsored to lelesape
+
+#####################
+#  Spawn settings   #
+#####################
+
+# The world to generate locations for.
+# MUST exist.
+spawn-world: main
+
+spawn-radius: 25,000,000
+nospawn-radius: 24,999,999
+
+# List of blocks white listed
+blocks:
+  - Vine
+  - Grass
+  - Fern
+  - Dead Bush
+  - Dandelion
+  - Poppy
+  - Blue Orchid
+  - Allium
+  - Azure Bluet
+  - Red Tulip
+  - Orange Tulip
+  - White Tulip
+  - Pink Tulip
+  - Oxeye Daisy
+  - Cornflower
+  - Brown Mushroom
+  - Red Mushroom
+  - Snow
+  - Sunflower
+  - Lilac
+  - Peony
+  - Tall Grass
+  - Large Fern
+  - Dirt
+  - Coarse Dirt
+  - Mycelium
+  - Podzol
+  - Grass Block
+  - Grass Path
+
+# List size
+cache-size: 25
