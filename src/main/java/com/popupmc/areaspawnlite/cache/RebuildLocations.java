@@ -30,6 +30,7 @@ public class RebuildLocations extends AbstractAsyncLoop {
 
     // Location was found
     public void locFound(Location loc) {
+
         // Attempt to add it and if successful (not a duplicate)
         // proceed onward
         if(plugin.settingFiles.locationFile.add(loc))

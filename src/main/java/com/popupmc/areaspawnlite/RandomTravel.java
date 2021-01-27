@@ -71,6 +71,13 @@ public class RandomTravel {
             RebuildLocations.requestRun(plugin);
         }
 
+        if(player.hasPermission("travel.nodelay"))
+            teleportDelayed(loc, 1);
+        else
+            teleportDelayed(loc, 5 * 20);
+    }
+
+    public void teleportDelayed(LocationEntry loc, long delay) {
         // Do a teleport after 5 seconds
         teleport = new BukkitRunnable() {
             @Override
@@ -80,8 +87,8 @@ public class RandomTravel {
                 Location curLoc = player.getLocation();
 
                 if(curLoc.getBlockX() == preTeleportLocation.getBlockX() &&
-                    curLoc.getBlockY() == preTeleportLocation.getBlockY() &&
-                    curLoc.getBlockZ() == preTeleportLocation.getBlockZ())
+                        curLoc.getBlockY() == preTeleportLocation.getBlockY() &&
+                        curLoc.getBlockZ() == preTeleportLocation.getBlockZ())
                     // Make sure the chunk is still loaded after 5 seconds
                     loc.world.getChunkAtAsync(loc.x, loc.z).thenRun(() -> doTeleport(loc));
                 else {
@@ -89,7 +96,7 @@ public class RandomTravel {
                     selfDestroy();
                 }
             }
-        }.runTaskLater(plugin, 5 * 20);
+        }.runTaskLater(plugin, delay);
 
         preTeleportLocation = player.getLocation().clone();
     }
@@ -110,8 +117,15 @@ public class RandomTravel {
     }
 
     public void doTeleport(LocationEntry loc) {
+        // Announce Teleport
         player.sendMessage(ChatColor.GREEN + "Teleporting...");
-        player.teleport(new Location(loc.world, loc.x, loc.y, loc.z));
+
+        // Teleport 2 blocks above block at it's center
+        Location newLoc = new Location(loc.world, loc.x, loc.y + 1, loc.z);
+        newLoc = newLoc.toCenterLocation();
+
+        // Do teleport and initiate self-destroy
+        player.teleport(newLoc);
         selfDestroy();
     }
 

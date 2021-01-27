@@ -18,7 +18,6 @@ nospawn-radius: 24,999,999
 
 # List of blocks white listed
 blocks:
-  - Vine
   - Grass
   - Fern
   - Dead Bush
@@ -47,6 +46,8 @@ blocks:
   - Podzol
   - Grass Block
   - Grass Path
+  - Sand
+  - Gravel
 
 # List size
 cache-size: 25
