@@ -13,8 +13,8 @@
 # MUST exist.
 spawn-world: main
 
-spawn-radius: 25,000,000
-nospawn-radius: 24,999,999
+spawn-radius: 29,999,969
+nospawn-radius: 29,999,968
 
 # List of blocks white listed
 blocks:

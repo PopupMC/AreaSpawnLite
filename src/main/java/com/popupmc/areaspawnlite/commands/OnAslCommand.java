@@ -4,6 +4,7 @@ import com.popupmc.areaspawnlite.AreaSpawnLite;
 import com.popupmc.areaspawnlite.RandomTravel;
 import com.popupmc.areaspawnlite.cache.RebuildLocations;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -57,12 +58,16 @@ public class OnAslCommand implements CommandExecutor {
             sender.sendMessage(ChatColor.GOLD + "Is Rebuilding: " + ChatColor.YELLOW + (RebuildLocations.instance != null));
         else if(arg.equalsIgnoreCase("locs-startagain"))
             sender.sendMessage(ChatColor.GOLD + "Flagged Start Again: " + ChatColor.YELLOW + RebuildLocations.startAgain);
-        else if(arg.equalsIgnoreCase("add-normal-loc") && (sender instanceof Player)) {
-            plugin.settingFiles.locationFile.add(((Player)sender).getLocation());
+        else if(arg.equalsIgnoreCase("add-loc") && (sender instanceof Player)) {
+            Location loc = ((Player)sender).getLocation().clone();
+            loc.setY(loc.getBlockY() - 1);
+            plugin.settingFiles.locationFile.add(loc);
             sender.sendMessage(ChatColor.GREEN + "Location added as a normal location!");
         }
         else if(arg.equalsIgnoreCase("add-persistent-loc") && (sender instanceof Player)) {
-            plugin.settingFiles.locationFile.add(((Player)sender).getLocation(), true);
+            Location loc = ((Player)sender).getLocation().clone();
+            loc.setY(loc.getBlockY() - 1);
+            plugin.settingFiles.locationFile.add(loc, true);
             sender.sendMessage(ChatColor.GREEN + "Location added as a persistent location!");
         }
 

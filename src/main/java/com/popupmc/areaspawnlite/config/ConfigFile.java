@@ -78,7 +78,7 @@ public class ConfigFile {
     public Location getRandomTopLocation() {
        return getRandomLocation(
                -spawnRadius, // From X
-               noSpawnRadius, // From Z
+               noSpawnRadius + 1, // From Z
                spawnRadius, // To X
                spawnRadius // To Z
        );
@@ -86,7 +86,7 @@ public class ConfigFile {
 
     public Location getRandomRightLocation() {
         return getRandomLocation(
-                noSpawnRadius, // From X
+                noSpawnRadius + 1, // From X
                 -spawnRadius, // From Z
                 spawnRadius, // To X
                 spawnRadius // To Z
@@ -96,7 +96,7 @@ public class ConfigFile {
     public Location getRandomBottomLocation() {
         return getRandomLocation(
                 -spawnRadius, // From X
-                -noSpawnRadius, // From Z
+                -noSpawnRadius - 1, // From Z
                 spawnRadius, // To X
                 -spawnRadius // To Z
         );
@@ -104,7 +104,7 @@ public class ConfigFile {
 
     public Location getRandomLeftLocation() {
         return getRandomLocation(
-                -noSpawnRadius, // From X
+                -noSpawnRadius - 1, // From X
                 -spawnRadius, // From Z
                 -spawnRadius, // To X
                 spawnRadius // To Z
