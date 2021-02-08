@@ -33,12 +33,14 @@ public class OnTravelCommand implements CommandExecutor {
         }
 
         Player player = (Player)sender;
+
+        // Normal teleport with auto instant
         RandomTravel.queueTraveler(player, plugin);
         return true;
     }
 
     public boolean onTravelOthersCommand(@NotNull CommandSender sender, String name) {
-        if(!sender.hasPermission("travel.others")) {
+        if(!sender.hasPermission("travel.others") && !sender.isOp()) {
             sender.sendMessage(ChatColor.RED + "You don't have permission to /travel others!");
             return false;
         }
@@ -49,7 +51,8 @@ public class OnTravelCommand implements CommandExecutor {
             return false;
         }
 
-        RandomTravel.queueTraveler(player, plugin);
+        // Instant teleport of other player
+        RandomTravel.queueTraveler(player, plugin, true);
         return true;
     }
 

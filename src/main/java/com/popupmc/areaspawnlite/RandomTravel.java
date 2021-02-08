@@ -2,10 +2,7 @@ package com.popupmc.areaspawnlite;
 
 import com.popupmc.areaspawnlite.cache.RebuildLocations;
 import com.popupmc.areaspawnlite.config.LocationEntry;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
@@ -13,9 +10,15 @@ import org.bukkit.scheduler.BukkitTask;
 import java.util.ArrayList;
 
 public class RandomTravel {
-    public RandomTravel(Player player, AreaSpawnLite plugin) {
+    public RandomTravel(Player player, AreaSpawnLite plugin, boolean instant, String commandAfterRun) {
         this.plugin = plugin;
         this.player = player;
+        this.instant = instant;
+        this.commandAfterRun = commandAfterRun;
+
+        // Ensure instant is always set under these conditions
+        if(player.isOp() || player.hasPermission("travel.nodelay"))
+            this.instant = true;
 
         instances.add(this);
 
@@ -26,7 +29,7 @@ public class RandomTravel {
     public void travel() {
         // Check to see if there are any locations generated, if not stop here and request re-generation
         if(plugin.settingFiles.locationFile.locs.size() <= 0) {
-            player.sendMessage(ChatColor.GOLD + "Warning: there are no locations generated yet... Try again in a few minutes.");
+            player.sendMessage(ChatColor.GOLD + "Warning: there are no locations generated yet... Try again in a few seconds.");
             RebuildLocations.requestRun(plugin);
             selfDestroy();
             return;
@@ -34,7 +37,10 @@ public class RandomTravel {
 
         // Send message early to give immidiate response, there will be various async delays in-between
         // We don't want a long delay for thep layer to get this message
-        player.sendMessage(ChatColor.GOLD + "Preparing to teleport you in about 5 seconds, don't move...");
+        if(!instant)
+            player.sendMessage(ChatColor.GOLD + "Preparing to teleport you in about 5 seconds, don't move...");
+        else
+            player.sendMessage(ChatColor.GOLD + "Preparing to teleport you...");
 
         // Get a random location
         LocationEntry location = plugin.settingFiles.locationFile.getRandom();
@@ -71,7 +77,7 @@ public class RandomTravel {
             RebuildLocations.requestRun(plugin);
         }
 
-        if(player.hasPermission("travel.nodelay"))
+        if(instant)
             teleportDelayed(loc, 1);
         else
             teleportDelayed(loc, 5 * 20);
@@ -82,6 +88,12 @@ public class RandomTravel {
         teleport = new BukkitRunnable() {
             @Override
             public void run() {
+
+                // If instant then just teleport and skip all the other stuff
+                if(instant) {
+                    loc.world.getChunkAtAsync(loc.x, loc.z).thenRun(() -> doTeleport(loc));
+                    return;
+                }
 
                 // Make sure player didn't move, teleport if did
                 Location curLoc = player.getLocation();
@@ -120,12 +132,18 @@ public class RandomTravel {
         // Announce Teleport
         player.sendMessage(ChatColor.GREEN + "Teleporting...");
 
-        // Teleport 2 blocks above block at it's center
+        // Teleport 1 blocks above block at it's center
         Location newLoc = new Location(loc.world, loc.x, loc.y + 1, loc.z);
         newLoc = newLoc.toCenterLocation();
 
         // Do teleport and initiate self-destroy
         player.teleport(newLoc);
+
+        // If theres a command to run, go ahead and run it now
+        if(!commandAfterRun.isEmpty()) {
+            Bukkit.dispatchCommand(player, commandAfterRun);
+        }
+
         selfDestroy();
     }
 
@@ -133,8 +151,16 @@ public class RandomTravel {
         instances.remove(this);
     }
 
+    public static void queueTraveler(Player player, AreaSpawnLite plugin, boolean instant, String commandAfterRun) {
+        new RandomTravel(player, plugin, instant, commandAfterRun);
+    }
+
+    public static void queueTraveler(Player player, AreaSpawnLite plugin, boolean instant) {
+        new RandomTravel(player, plugin, instant, "");
+    }
+
     public static void queueTraveler(Player player, AreaSpawnLite plugin) {
-        new RandomTravel(player, plugin);
+        new RandomTravel(player, plugin, false, "");
     }
 
     AreaSpawnLite plugin;
@@ -143,6 +169,12 @@ public class RandomTravel {
     BukkitTask teleport;
 
     Location preTeleportLocation;
+
+    // Instantly /travel
+    boolean instant;
+
+    // Command to run after teleport, if empty does nothing
+    String commandAfterRun = "";
 
     public static ArrayList<RandomTravel> instances = new ArrayList<>();
 }

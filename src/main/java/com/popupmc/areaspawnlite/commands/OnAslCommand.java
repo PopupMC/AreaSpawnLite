@@ -3,6 +3,7 @@ package com.popupmc.areaspawnlite.commands;
 import com.popupmc.areaspawnlite.AreaSpawnLite;
 import com.popupmc.areaspawnlite.RandomTravel;
 import com.popupmc.areaspawnlite.cache.RebuildLocations;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
@@ -10,6 +11,8 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Arrays;
 
 public class OnAslCommand implements CommandExecutor {
     public OnAslCommand(AreaSpawnLite plugin) {
@@ -19,7 +22,7 @@ public class OnAslCommand implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
 
-        if(!sender.hasPermission("asl.use")) {
+        if(!sender.hasPermission("asl.use") && !sender.isOp()) {
             sender.sendMessage(ChatColor.RED + "You don't have permission to use this command");
             return false;
         }
@@ -69,6 +72,30 @@ public class OnAslCommand implements CommandExecutor {
             loc.setY(loc.getBlockY() - 1);
             plugin.settingFiles.locationFile.add(loc, true);
             sender.sendMessage(ChatColor.GREEN + "Location added as a persistent location!");
+        }
+        else if(arg.equalsIgnoreCase("travel-w-command")) {
+
+            // 0 = travel-w-command
+            // 1 = player Name
+            // 2... = args
+            if(args.length < 3) {
+                sender.sendMessage(ChatColor.RED + "ERROR: Not enough args");
+                return false;
+            }
+
+            String playerName = args[1];
+            Player player = Bukkit.getPlayer(playerName);
+            if(player == null) {
+                sender.sendMessage(ChatColor.RED + "ERROR: Player not found.");
+                return false;
+            }
+
+            // Remove first 2 elements
+            String[] commandElsToRun = Arrays.copyOfRange(args, 2, args.length);
+            String commandToRun = String.join(" ", commandElsToRun);
+
+            // Teleport player instantly with command
+            RandomTravel.queueTraveler(player, plugin, true, commandToRun);
         }
 
         return true;
