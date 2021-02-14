@@ -141,7 +141,8 @@ public class RandomTravel {
 
         // If theres a command to run, go ahead and run it now
         if(!commandAfterRun.isEmpty()) {
-            Bukkit.dispatchCommand(player, commandAfterRun);
+            //Bukkit.dispatchCommand(player, commandAfterRun);
+            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), commandAfterRun);
         }
 
         selfDestroy();
@@ -174,7 +175,7 @@ public class RandomTravel {
     boolean instant;
 
     // Command to run after teleport, if empty does nothing
-    String commandAfterRun = "";
+    String commandAfterRun;
 
     public static ArrayList<RandomTravel> instances = new ArrayList<>();
 }
